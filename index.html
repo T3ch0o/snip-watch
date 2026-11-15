@@ -4,28 +4,54 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#e8343c">
+<meta property="og:site_name" content="Snip">
+<meta property="og:title" content="Snip live">
+<meta property="og:description" content="A live screen share. Open the link to watch, nothing to install.">
+<meta property="og:type" content="website">
 <title>Snip live</title>
 <style>
   :root { color-scheme: dark; }
   html, body { margin: 0; height: 100%; background: #000; overflow: hidden; font: 14px/1.4 "Segoe UI", system-ui, sans-serif; color: #eee; }
+  body.idle { cursor: none; }
   video { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; }
-  #status { position: fixed; left: 50%; bottom: 32px; transform: translateX(-50%); max-width: calc(100% - 32px); box-sizing: border-box;
+
+  #status { position: fixed; left: 50%; bottom: 84px; transform: translateX(-50%); max-width: calc(100% - 32px); box-sizing: border-box;
             padding: 10px 18px; border-radius: 10px; background: rgba(32,32,32,.92); border: 1px solid #3a3a3a; text-align: center; }
   #status.fatal { border-color: #c42b1c; }
-  #play { position: fixed; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom));
-          padding: 9px 16px; font: inherit; font-size: 14px; color: #fff; background: rgba(0,103,192,.92);
-          border: 0; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,.4); }
-  #info { position: fixed; top: 10px; right: 12px; padding: 4px 10px; border-radius: 8px; background: rgba(32,32,32,.8);
-          font-size: 12px; opacity: 0; transition: opacity .3s; pointer-events: none; }
-  body:hover #info:not(:empty) { opacity: 1; }
+
+  #controls { position: fixed; left: 0; right: 0; bottom: 0; display: flex; align-items: center; gap: 4px;
+              padding: 36px max(12px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+              background: linear-gradient(transparent, rgba(0,0,0,.8)); transition: opacity .25s; }
+  body.idle #controls { opacity: 0; pointer-events: none; }
+  #controls button { width: 40px; height: 40px; padding: 0; border: 0; border-radius: 8px; background: none; color: #fff;
+                     display: grid; place-items: center; cursor: pointer; }
+  #controls button:hover { background: rgba(255,255,255,.14); }
+  #controls button:focus-visible { outline: 2px solid #fff; outline-offset: -2px; }
+  #controls svg { width: 24px; height: 24px; fill: currentColor; }
+  #volume { width: 88px; margin: 0 6px 0 2px; accent-color: #fff; cursor: pointer; }
+  #live { display: inline-flex; align-items: center; gap: 6px; margin-left: 8px; padding: 2px 8px; border-radius: 6px;
+          background: rgba(232,52,60,.18); font-size: 12px; font-weight: 600; letter-spacing: .06em; }
+  #live i { width: 8px; height: 8px; border-radius: 50%; background: #e8343c; }
+  #info { margin-left: 10px; font-size: 12px; color: #bbb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #hint { margin-left: 8px; padding: 4px 10px; border-radius: 6px; background: #0067c0; font-size: 12px; white-space: nowrap; }
+  .grow { flex: 1; min-width: 0; }
+  @media (max-width: 560px) { #volume, #info { display: none; } }
   [hidden] { display: none !important; }
 </style>
 </head>
 <body>
 <video id="video" autoplay playsinline></video>
 <div id="status">Connecting…</div>
-<button id="play" hidden>&#128264; Turn on sound</button>
-<div id="info"></div>
-<script type="module">import init from "./snip_viewer.js"; init();</script>
+<div id="controls">
+  <button id="playpause" aria-label="Pause (Space)" title="Pause (Space)"></button>
+  <button id="mute" aria-label="Mute (M)" title="Mute (M)"></button>
+  <input id="volume" type="range" min="0" max="1" step="0.02" value="1" aria-label="Volume">
+  <span id="live"><i></i>LIVE</span>
+  <span id="hint" hidden>Sound is off: press the speaker</span>
+  <span id="info" class="grow"></span>
+  <button id="fullscreen" aria-label="Full screen (F)" title="Full screen (F)"></button>
+</div>
+<script type="module">import init from "./snip_viewer.js?v=9ae214dd6576"; init({ module_or_path: "./snip_viewer_bg.wasm?v=9ae214dd6576" });</script>
 </body>
 </html>
